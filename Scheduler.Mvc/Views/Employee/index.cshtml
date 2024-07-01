@@ -1,0 +1,45 @@
+﻿@model IEnumerable<Scheduler.Mvc.Models.EmployeeView>
+
+@{
+    ViewData["Title"] = "index";
+}
+
+<h1>Employees</h1>
+
+
+<div class="table-responsive mt-3">
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>EmployeeID</th>
+                <th>Name</th>
+                <th>Phone number</th>
+                <th>Email</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        @if (Model == null)
+        {
+            <tbody>
+                <tr>
+                    <td colspan="5">No employess</td>
+                </tr>
+            </tbody>
+        }
+        else
+        {
+            <tbody>
+                @foreach (var EmployeeView in Model)
+                {
+                    <tr>
+                        <td>@EmployeeView.EmployeeId</td>
+                        <td>@(EmployeeView.FirstName + " " + EmployeeView.LastName)</td>
+                        <td>@EmployeeView.PhoneNumber</td>
+                        <td>@EmployeeView.Email</td>
+                        <td>@EmployeeView.Role</td>
+                    </tr>
+                }
+            </tbody>
+        }
+    </table>
+</div>

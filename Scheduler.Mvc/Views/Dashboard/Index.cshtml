@@ -1,0 +1,136 @@
+﻿@using System.Globalization;
+@model Scheduler.Mvc.Models.DashboardViewModel
+
+
+@{
+    ViewData["Title"] = "index";
+}
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    @TempData["Error"]
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<h1>Dashboard</h1>
+<hr />
+<div class="container-fluid ps-0">
+    @if (!User.IsInRole("Manager"))
+    {
+        <div class="d-flex justify-content-center mt-3">
+        <form class="form-inline d-flex flex-wrap" asp-action="CreateHourSlip">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="form-floating col-md-6 col-lg-3">
+                <input asp-for="HourSlip.ProjectId" class="form-control" type="number" placeholder="" required value="" />
+                <label asp-for="HourSlip.ProjectId" class="control-label">Project Id</label>
+                <span asp-validation-for="HourSlip.ProjectId" class="text-danger"></span>
+            </div>
+            <div class="form-floating col-md-6 col-lg-3">
+                <input asp-for="HourSlip.StartTime" class="form-control" type="time" placeholder="" required value=""/>
+                <label asp-for="HourSlip.StartTime" class="control-label">Start Time</label>
+                <span asp-validation-for="HourSlip.StartTime" class="text-danger"></span>
+            </div>
+            <div class="form-floating col-md-6 col-lg-3">
+                <input asp-for="HourSlip.EndTime" class="form-control" type="time" placeholder="" required value=""/>
+                <label asp-for="HourSlip.EndTime" class="control-label">End Time</label>
+                <span asp-validation-for="HourSlip.EndTime" class="text-danger"></span>
+            </div>
+            <div class="form-floating col-md-6 col-lg-3">
+                <input asp-for="HourSlip.Date" class="form-control" type="date" placeholder="" required value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                <label asp-for="HourSlip.Date" class="control-label">Date</label>
+                <span asp-validation-for="HourSlip.Date" class="text-danger"></span>
+            </div>
+            <div class="form-group d-flex">
+                    <input type="submit" value="Log" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+    }
+    <h2 class="mt-5">HourSlip history</h2>
+    <hr/>
+
+    <div class="table-responsive mt-3">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    @if (User.IsInRole("Manager") || User.IsInRole("Admin"))
+                    {
+                        <th>Name</th>
+                    }
+                    <th>Date</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Approved</th>
+                    <th>Edit</th>
+                    @if (User.IsInRole("Manager") || User.IsInRole("Admin"))
+                    {
+                        <th>Approve</th>
+                    }
+                    </tr>
+            </thead>
+            @if (Model.HourSlips == null)
+            {
+                <tbody>
+                    <tr>
+                        <td colspan="5">No hour slips logged</td>
+                    </tr>
+                </tbody>
+            }
+            else
+            {
+                <tbody>
+                    @foreach (var hourSlip in Model.HourSlips)
+                    {
+                        <tr>
+                            @if (User.IsInRole("Manager") || User.IsInRole("Admin"))
+                            {
+                                <td>@(hourSlip.Employee.FirstName + " " + @hourSlip.Employee.LastName)</td>
+                            }
+                            <td>@hourSlip.Date.ToShortDateString()</td>
+                            <form method="post" asp-action="UpdateHourSlip">
+                            <td>
+                                <input asp-for="HourSlip.Id" class="form-control" type="hidden"  value="@hourSlip.Id" />
+                                <input asp-for="HourSlip.StartTime" class="form-control" type="time" required value="@hourSlip.StartTime.ToString("HH:mm", CultureInfo.InvariantCulture)" />
+                                <input asp-for="HourSlip.ProjectId" class="form-control" type="hidden"  value="@hourSlip.ProjectId" />
+                                <input asp-for="HourSlip.RowVersion" class="form-control" type="hidden" value="@Convert.ToBase64String(hourSlip.RowVersion)" />
+                            </td>
+                            <td>
+                                <input asp-for="HourSlip.EndTime" class="form-control" type="time" required value="@hourSlip.EndTime.ToString("HH:mm", CultureInfo.InvariantCulture)" />
+                            </td>
+                            <td>@(hourSlip.IsApproved ? "Yes" : "No")</td>
+                            <td>
+                                <button type="submit" class="btn btn-primary">Edit</button>
+                            </td>
+                            </form>
+
+                            @if (User.IsInRole("Manager") || User.IsInRole("Admin"))
+                            {
+                                <td>
+                                    <form method="post" asp-action="ApproveHourSlip">
+                                        <input asp-for="HourSlip.RowVersion" class="form-control" type="hidden" value="@Convert.ToBase64String(hourSlip.RowVersion)" />
+                                        <input asp-for="HourSlip.Id" class="form-control" type="hidden" value="@hourSlip.Id" />
+                                        <button type="submit" class="btn btn-primary">Approve</button>
+                                    </form>
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            }
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

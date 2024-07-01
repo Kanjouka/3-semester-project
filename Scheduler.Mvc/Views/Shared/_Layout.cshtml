@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Scheduler</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link href="~/css/sidebar.css" rel="stylesheet" />
+    <!--https://getbootstrap.com/docs/5.0/getting-started/introduction/ doc for bootstrap-->
+</head>
+<body>
+      <!---Laver layoutet ---></>
+    <div class="container-fluid overflow-hidden">
+        <div class="row vh-100 overflow-auto">
+            <div class="col-sm-auto col-xl-auto px-sm-2 px-0 bg-secondary d-flex sticky-top" id="nav_bar">
+                <div class="d-flex flex-sm-column flex-row flex-grow-1 align-items-center align-items-sm-start px-3 pt-2 text-white">
+                    <!--Laver Scheduler logo her med bootstrap hvor S er taget fra cheduler så man kan fjerne når man er mobil view-->
+                    <a>
+                        <span class="fs-5">S<span class="d-none d-sm-inline">cheduler</span></span>
+                    </a>
+                    <!--Laver alle menuer her-->
+                    <ul class="nav nav-pills nav-fill flex-sm-column flex-row flex-nowrap flex-shrink-1 flex-sm-grow-0 flex-grow-1 mb-sm-auto mb-0 justify-content-center
+                    align-items-center align-items-sm-start" id="menu">
+                        <li class="nav-item">
+                            <a asp-area="" asp-controller="dashboard" asp-action="index" class="nav-link text-white px-sm-0 px-2">
+                                <i class="fa-solid fa-house"></i><span class="ms-1 d-none d-sm-inline">Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-area="" asp-controller="employee" asp-action="index" class="nav-link text-white px-sm-0 px-2">
+                                <i class="fa-solid fa-user"></i><span class="ms-1 d-none d-sm-inline">All employees</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    @if(User.Identity.IsAuthenticated){
+                    <div class="py-sm-4 mt-sm-auto ms-sm-0 flex-shrink-1">
+                            @User.Identity?.Name
+                        <a class="btn btn-outline-light btn-sm" asp-area="" asp-controller="Account" asp-action="Logout">
+                            <i class="fa-solid fa-arrow-right-to-bracket"></i> Logout
+                        </a>
+                    </div>
+                    } 
+                    else{
+                    <div class="py-sm-4 mt-sm-auto ms-sm-0 flex-shrink-1">
+                        <a class="btn btn-outline-light btn-sm" asp-area="" asp-controller="Account" asp-action="Login">
+                            <i class="fa-solid fa-arrow-right-to-bracket"></i> Login
+                        </a>
+                    </div>
+                    }
+                    <!--Laver logout knap her-->
+                   
+                </div>
+            </div>
+            <div class="col d-flex flex-column h-100">
+                <main role="main" class="pb-3">
+                    @RenderBody()
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/b885e6dea0.js" crossorigin="anonymous"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
